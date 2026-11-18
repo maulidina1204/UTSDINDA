@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CyberShield – Firewall Engine & Network Threat Prevention</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060a12;--panel:#0b111c;--panel2:#0f1724;--line:#1a2535;--tx:#e6edf6;--mut:#7d8ca3;--cy:#22d3ee;--gr:#34d399;--rd:#f43f5e;--am:#fbbf24;--mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;--sans:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.5 var(--sans);min-height:100vh}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
+.app{max-width:1280px;margin:0 auto;padding:14px}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 16px}
+.brand{display:flex;gap:12px;align-items:center}
+.logo{width:40px;height:40px;border-radius:10px;border:1px solid #164e63;background:#082631;display:grid;place-items:center;color:var(--cy)}
+.brand b{font-size:16px}.brand small{display:block;color:var(--mut);font-size:11.5px}
+.ver{font:500 10px var(--mono);background:#0a3a47;color:var(--cy);border:1px solid #155e75;border-radius:4px;padding:1px 6px;margin-left:6px}
+.pills{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.pill{font:500 11.5px var(--mono);border:1px solid var(--line);background:var(--panel2);border-radius:8px;padding:6px 10px;color:var(--mut);cursor:default;display:flex;gap:7px;align-items:center}
+.pill b{font-weight:700}.dot{width:7px;height:7px;border-radius:50%;background:var(--gr)}
+button.pill{cursor:pointer}
+.ok{color:var(--gr)}.bad{color:var(--rd)}.cy{color:var(--cy)}.warn{color:var(--am)}
+.clock{text-align:right;font:700 13px var(--mono);color:var(--cy)}.clock small{display:block;font:400 10px var(--mono);color:var(--mut)}
+.btn{border:1px solid #14532d;background:#0a2a1e;color:var(--gr);border-radius:8px;padding:7px 12px;cursor:pointer;font-weight:500}
+.btn.off{border-color:#7f1d1d;background:#2a0d14;color:var(--rd)}
+.layout{display:grid;grid-template-columns:230px 1fr;gap:14px;margin-top:14px;align-items:start}
+nav,.res{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px}
+nav a{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:9px;color:var(--mut);text-decoration:none;font-weight:500;margin-bottom:2px}
+nav a:hover{color:var(--tx)}nav a.on{background:#0a2f3b;color:var(--cy);border:1px solid #155e75}
+nav a .n{margin-left:auto;font:500 10px var(--mono);background:#0a3a47;color:var(--cy);border-radius:5px;padding:1px 6px}
+.res{margin-top:14px;font:11.5px var(--mono);color:var(--mut)}
+.res div.r{display:flex;justify-content:space-between;margin-top:10px}.res .bar{height:5px;background:#16202e;border-radius:3px;margin-top:4px;overflow:hidden}.res .bar i{display:block;height:100%;background:var(--cy);transition:width .6s}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
+.card h2{margin:0;font-size:15px}.card .sub{color:var(--mut);font-size:12px;margin:2px 0 12px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.stat small{color:var(--mut);font-size:12px}.stat .v{font:700 26px var(--mono);margin:4px 0}.stat .f{font-size:11.5px;color:var(--mut)}
+.stat{display:flex;justify-content:space-between;gap:8px}
+.ic{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;border:1px solid var(--line);flex:none}
+.grid2{display:grid;grid-template-columns:1.9fr 1fr;gap:14px;margin-top:14px}
+canvas{width:100%;height:260px;display:block}
+.legend{display:flex;gap:12px;font-size:11.5px;margin-top:6px}.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+.pb{display:grid;grid-template-columns:62px 1fr 48px;gap:8px;align-items:center;margin:11px 0;font:12px var(--mono)}
+.pb .t{height:9px;background:#16202e;border-radius:5px;overflow:hidden}.pb .t i{display:block;height:100%;background:linear-gradient(90deg,#9f1239,var(--rd));border-radius:5px;transition:width .5s}
+.pb span:last-child{text-align:right;color:var(--mut)}
+.tw{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:560px}
+th{font:500 11px var(--mono);color:var(--mut);text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid #121b29;font-size:13px;white-space:nowrap}td.m{font-family:var(--mono);font-size:12.5px}
+td.empty{text-align:center;color:var(--mut);white-space:normal;padding:22px}
+.chip{font:600 11px var(--mono);padding:2px 8px;border-radius:5px;border:1px solid}
+.chip.a{color:var(--gr);background:#0a2a1e;border-color:#14532d}.chip.b{color:var(--rd);background:#2a0d14;border-color:#7f1d1d}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:end}
+label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mut)}
+input,select{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-width:0}
+input{width:170px}input.s{width:110px}input.w{width:220px}
+.b2{border:1px solid #155e75;background:#0a3340;color:var(--cy);border-radius:8px;padding:8px 14px;cursor:pointer;font-weight:600}
+.b2:hover{background:#0c4252}.b2.r{border-color:#7f1d1d;background:#2a0d14;color:var(--rd)}.b2.g{border-color:#14532d;background:#0a2a1e;color:var(--gr)}.b2.y{border-color:#78350f;background:#2b1a06;color:var(--am)}
+.x{background:none;border:1px solid var(--line);color:var(--mut);border-radius:6px;padding:3px 9px;cursor:pointer}.x:hover{color:var(--rd);border-color:#7f1d1d}
+.sw{width:38px;height:20px;border-radius:10px;border:1px solid var(--line);background:#16202e;position:relative;cursor:pointer;padding:0}
+.sw::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:var(--mut);transition:.2s}
+.sw.on{background:#0a3340;border-color:#155e75}.sw.on::after{left:20px;background:var(--cy)}
+.view{display:none}.view.on{display:block}
+.feed{max-height:430px;overflow:auto;font:12px var(--mono)}
+.feed div{display:flex;gap:10px;padding:6px 4px;border-bottom:1px solid #121b29;align-items:center;flex-wrap:wrap}.feed .t{color:var(--mut)}.feed .d{color:var(--mut);margin-left:auto}
+.simg{display:grid;grid-template-columns:340px 1fr;gap:14px}
+.atk{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.note{color:var(--mut);font-size:12px;margin:0 0 12px}
+#toast{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));background:#0f1d2b;border:1px solid #155e75;color:var(--tx);padding:10px 14px;border-radius:10px;opacity:0;transform:translateY(8px);transition:.25s;pointer-events:none;max-width:320px;z-index:20}
+#toast.show{opacity:1;transform:none}
+@media(max-width:960px){.layout{grid-template-columns:1fr}nav{display:flex;overflow-x:auto;gap:4px}nav a{white-space:nowrap;margin:0}.res{display:none}.stats{grid-template-columns:1fr 1fr}.grid2,.simg{grid-template-columns:1fr}}
+@media(max-width:520px){.stats{grid-template-columns:1fr}.clock{text-align:left}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="brand"><div class="logo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+    <div><b>CyberShield</b><span class="ver">v4.2-ENT</span><small>Firewall Engine & Network Threat Prevention</small></div></div>
+  <div class="pills">
+    <div class="pill"><i class="dot" id="fwDot"></i>Firewall: <b id="fwTxt" class="ok">AKTIF (ALLOW-LIST)</b></div>
+    <button class="pill" id="ipsBtn" title="Klik untuk mengaktifkan/menonaktifkan IDS/IPS"><i class="dot" style="background:var(--cy)"></i>IDS/IPS Engine: <b id="ipsTxt" class="cy">ONLINE</b></button>
+    <div class="pill">Tingkat Ancaman: <b id="thr" class="ok">RENDAH</b></div>
+  </div>
+  <div class="pills"><div class="clock"><span id="clk">00:00:00 UTC</span><small>Uptime: 99.98%</small></div><button class="btn" id="fwBtn">⏻ Matikan Firewall</button></div>
+</header>
+
+<div class="layout">
+<aside>
+<nav id="nav" aria-label="Menu utama">
+  <a href="#dashboard" data-v="dashboard">▦ Dashboard</a>
+  <a href="#aturan" data-v="aturan">⛨ Aturan Firewall <span class="n" id="nRules">0</span></a>
+  <a href="#simulasi" data-v="simulasi">∿ Simulasi Traffic & Serangan</a>
+  <a href="#log" data-v="log">☰ Log Keamanan</a>
+  <a href="#blacklist" data-v="blacklist">⊘ Blacklist IP & Ancaman</a>
+</nav>
+<div class="res">
+  <div class="r" style="margin-top:2px"><span>Beban CPU</span><span class="cy" id="cpuT">18%</span></div><div class="bar"><i id="cpuB" style="width:18%"></i></div>
+  <div class="r"><span>Penggunaan Memori</span><span class="cy" id="memT">42%</span></div><div class="bar"><i id="memB" style="width:42%"></i></div>
+  <div class="r"><span>Bandwidth In/Out</span><span class="ok" id="bwT">1.4 MB/s</span></div>
+</div>
+</aside>
+
+<main>
+<!-- DASHBOARD -->
+<section class="view" id="v-dashboard">
+  <div class="stats">
+    <div class="card stat"><div><small>Total Paket Diinspeksi</small><div class="v" id="sTot">0</div><div class="f ok" id="sRate">↗ memuat…</div></div><div class="ic cy">⌕</div></div>
+    <div class="card stat"><div><small>Koneksi Diizinkan</small><div class="v ok" id="sAl">0</div><div class="f">Tingkat Kelulusan: <b class="ok" id="sPass">0%</b></div></div><div class="ic ok">✓</div></div>
+    <div class="card stat"><div><small>Ancaman Diblokir</small><div class="v bad" id="sBl">0</div><div class="f bad">⚠ Filter Malicious Active</div></div><div class="ic bad">⛨</div></div>
+    <div class="card stat"><div><small>Aturan Firewall Aktif</small><div class="v cy" id="sRl">0</div><div class="f" id="sRlD"></div></div><div class="ic cy">☷</div></div>
+  </div>
+  <div class="grid2">
+    <div class="card"><h2>Volume Traffic Waktu Nyata</h2><div class="sub">Koneksi Diizinkan vs Paket Diblokir (paket/detik)</div>
+      <canvas id="cv" role="img" aria-label="Grafik volume traffic diizinkan dan diblokir"></canvas>
+      <div class="legend"><span><i style="background:var(--gr)"></i>Diizinkan</span><span><i style="background:var(--rd)"></i>Diblokir</span></div></div>
+    <div class="card"><h2>Port Paling Sering Diblokir</h2><div class="sub">Distribusi percobaan serangan berdasarkan port target</div><div id="ports"></div></div>
+  </div>
+  <div class="card" style="margin-top:14px"><div class="row" style="justify-content:space-between"><h2>Peringatan Keamanan Terkini</h2><a href="#log" class="cy" style="font-size:12px;text-decoration:none">Lihat Semua Log →</a></div>
+    <div class="tw"><table><thead><tr><th>WAKTU</th><th>IP ASAL</th><th>PORT TARGET</th><th>DESKRIPSI SERANGAN</th><th>TINDAKAN</th></tr></thead><tbody id="alerts"></tbody></table></div></div>
+</section>
+
+<!-- ATURAN -->
+<section class="view" id="v-aturan">
+  <div class="card"><h2>Tambah Aturan Firewall</h2><p class="sub">Aturan dievaluasi dari atas ke bawah; aturan aktif pertama yang cocok berlaku. Paket tanpa aturan yang cocok diblokir (allow-list).</p>
+    <div class="row">
+      <label>Nama aturan<input id="rN" class="w" placeholder="mis. Izinkan HTTP"></label>
+      <label>Aksi<select id="rA"><option value="allow">Izinkan</option><option value="block">Blokir</option></select></label>
+      <label>IP sumber<input id="rI" value="any" placeholder="any / 10.0.0.5 / 10.0.0.0/24"></label>
+      <label>Port tujuan<input id="rP" class="s" value="any" placeholder="80 / 1-1024 / 80,443"></label>
+      <label>Protokol<select id="rT"><option>tcp</option><option>udp</option><option>any</option></select></label>
+      <button class="b2" id="rAdd">+ Tambah aturan</button></div></div>
+  <div class="card" style="margin-top:14px"><h2>Daftar Aturan</h2><div class="sub">Gunakan saklar untuk mengaktifkan atau menonaktifkan aturan.</div>
+    <div class="tw"><table><thead><tr><th>#</th><th>NAMA</th><th>AKSI</th><th>IP SUMBER</th><th>PORT</th><th>PROTO</th><th>AKTIF</th><th></th></tr></thead><tbody id="rules"></tbody></table></div></div>
+</section>
+
+<!-- SIMULASI -->
+<section class="view" id="v-simulasi">
+  <div class="simg">
+    <div class="card"><h2>Panel Simulasi</h2><p class="sub">Semua paket melewati mesin firewall yang sama dengan aturan dan blacklist Anda.</p>
+      <button class="b2 g" id="trf" style="width:100%">⏸ Jeda traffic normal</button>
+      <div class="note" style="margin-top:14px">Jalankan simulasi serangan</div>
+      <div class="atk">
+        <button class="b2 y" data-atk="scan">Port Scan</button>
+        <button class="b2 y" data-atk="ssh">Brute Force SSH</button>
+        <button class="b2 r" data-atk="syn">SYN Flood</button>
+        <button class="b2 r" data-atk="sqli">SQL Injection</button></div>
+      <label style="flex-direction:row;align-items:center;gap:8px"><input type="checkbox" id="auto" checked style="width:auto"> Blacklist otomatis IP penyerang</label>
+      <div class="note" style="margin-top:16px">Uji koneksi manual</div>
+      <div class="row"><label>IP sumber<input id="mI" value="203.0.113.9" style="width:140px"></label><label>Port<input id="mP" class="s" value="80" style="width:80px"></label>
+        <label>Proto<select id="mT"><option>tcp</option><option>udp</option></select></label><button class="b2" id="mGo">Kirim</button></div></div>
+    <div class="card"><h2>Lalu Lintas Jaringan Langsung</h2><div class="sub">Status tiap koneksi: diizinkan atau diblokir</div><div class="feed" id="feed"></div></div>
+  </div>
+</section>
+
+<!-- LOG -->
+<section class="view" id="v-log">
+  <div class="card"><div class="row" style="justify-content:space-between"><div><h2>Log Keamanan</h2><div class="sub">Waktu kejadian, IP sumber, port tujuan, jenis aktivitas, dan tindakan sistem</div></div>
+    <div class="row"><label>Filter<select id="lf"><option value="">Semua</option><option value="allow">Diizinkan</option><option value="block">Diblokir</option></select></label><button class="b2 r" id="lClr">Hapus log</button></div></div>
+    <div class="tw"><table><thead><tr><th>WAKTU (UTC)</th><th>IP SUMBER</th><th>PORT TUJUAN</th><th>JENIS AKTIVITAS</th><th>TINDAKAN</th><th>ALASAN</th></tr></thead><tbody id="logs"></tbody></table></div></div>
+</section>
+
+<!-- BLACKLIST -->
+<section class="view" id="v-blacklist">
+  <div class="card"><h2>Tambah ke Blacklist</h2><p class="sub">Semua paket dari IP di daftar ini langsung diblokir sebelum aturan firewall diperiksa.</p>
+    <div class="row"><label>Alamat IP<input id="bI" placeholder="198.51.100.23"></label><label>Alasan<input id="bR" class="w" placeholder="mis. Pemindaian port berulang"></label><button class="b2" id="bAdd">+ Blokir IP</button></div></div>
+  <div class="card" style="margin-top:14px"><h2>Daftar IP Terblokir</h2><div class="sub" id="bCnt"></div>
+    <div class="tw"><table><thead><tr><th>IP</th><th>ALASAN</th><th>DITAMBAHKAN</th><th></th></tr></thead><tbody id="bl"></tbody></table></div></div>
+</section>
+</main>
+</div>
+</div>
+<div id="toast" role="status"></div>
+
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a, pick=a=>a[rnd(0,a.length-1)];
+const now=()=>new Date().toISOString().slice(11,19);
+const KEY="cybershield.v1";
+
+function seed(){
+  const t=now();
+  return {fw:true,ips:true,running:true,total:124580,allowed:118920,blocked:5660,
+    ports:{22:1840,23:1420,3389:980,445:760,3306:410,8080:250},
+    rules:[
+      {id:1,name:"Izinkan HTTP",action:"allow",ip:"any",port:"80",proto:"tcp",on:true},
+      {id:2,name:"Izinkan HTTPS",action:"allow",ip:"any",port:"443",proto:"tcp",on:true},
+      {id:3,name:"SSH jaringan internal",action:"allow",ip:"192.168.1.0/24",port:"22",proto:"tcp",on:true},
+      {id:4,name:"Izinkan DNS",action:"allow",ip:"any",port:"53",proto:"udp",on:true},
+      {id:5,name:"Blokir Telnet",action:"block",ip:"any",port:"23",proto:"tcp",on:true}],
+    bl:[{ip:"185.220.101.7",reason:"Node anonimisasi berbahaya",t:t},{ip:"45.155.205.233",reason:"Brute force SSH berulang",t:t}],
+    logs:[
+      {t:t,ip:"45.155.205.233",port:22,type:"Brute Force SSH",a:"block",r:"Blacklist IP"},
+      {t:t,ip:"91.240.118.50",port:3389,type:"Percobaan RDP",a:"block",r:"Default deny (allow-list)"},
+      {t:t,ip:"192.168.1.14",port:22,type:"Koneksi SSH",a:"allow",r:"Aturan: SSH jaringan internal"},
+      {t:t,ip:"103.89.12.4",port:23,type:"Telnet Scan",a:"block",r:"Aturan: Blokir Telnet"}]};
+}
+let S;
+try{S=JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){S=null}
+if(!S||!S.rules)S=seed();
+let nextId=Math.max(0,...S.rules.map(r=>r.id))+1, tickA=0, tickB=0, feed=[];
+let series=Array.from({length:60},()=>({a:rnd(25,50),b:rnd(1,5)}));
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+
+/* ---------- Mesin firewall ---------- */
+const ipInt=ip=>ip.split(".").reduce((n,o)=>(n<<8)+(+o),0)>>>0;
+const okIp=s=>/^(\d{1,3}\.){3}\d{1,3}$/.test(s)&&s.split(".").every(o=>+o<=255);
+function matchIp(spec,ip){
+  if(spec==="any")return true;
+  if(spec.includes("/")){const[b,n]=spec.split("/");const m=+n===0?0:(~0<<(32-+n))>>>0;return(ipInt(ip)&m)===(ipInt(b)&m)}
+  return spec===ip;
+}
+function matchPort(spec,p){
+  if(spec==="any")return true;
+  return spec.split(",").some(x=>{x=x.trim();if(x.includes("-")){const[a,b]=x.split("-").map(Number);return p>=a&&p<=b}return +x===p});
+}
+const okPort=s=>s==="any"||s.split(",").every(x=>/^\d{1,5}(-\d{1,5})?$/.test(x.trim())&&x.trim().split("-").every(n=>+n>=1&&+n<=65535));
+const okIpSpec=s=>s==="any"||okIp(s)||(/^[\d.]+\/\d{1,2}$/.test(s)&&okIp(s.split("/")[0])&&+s.split("/")[1]<=32);
+
+function evaluate(p){
+  if(!S.fw)return{a:"allow",r:"Firewall nonaktif"};
+  if(S.bl.some(b=>b.ip===p.ip))return{a:"block",r:"Blacklist IP"};
+  let hit=null;
+  for(const r of S.rules){
+    if(!r.on)continue;
+    if((r.proto==="any"||r.proto===p.proto)&&matchIp(r.ip,p.ip)&&matchPort(r.port,p.port)){
+      if(r.action==="block")return{a:"block",r:"Aturan: "+r.name};
+      hit=r;break;
+    }
+  }
+  if(!hit)return{a:"block",r:"Default deny (allow-list)"};
+  if(S.ips&&p.sig)return{a:"block",r:"IPS: signature "+p.type};
+  return{a:"allow",r:"Aturan: "+hit.name};
+}
+function handle(p,log){
+  const res=evaluate(p);
+  S.total++;
+  if(res.a==="allow"){S.allowed++;tickA++}else{S.blocked++;tickB++;S.ports[p.port]=(S.ports[p.port]||0)+1}
+  if(log){
+    const e={t:now(),ip:p.ip,port:p.port,type:p.type,a:res.a,r:res.r};
+    S.logs.unshift(e);if(S.logs.length>300)S.logs.length=300;
+    feed.unshift(e);if(feed.length>60)feed.length=60;
+  }
+  if(p.atk&&res.a==="block"&&S.auto&&!S.bl.some(b=>b.ip===p.ip)&&!res.r.startsWith("Aturan: Blokir")){
+    S.bl.unshift({ip:p.ip,reason:"Otomatis: "+p.type,t:now()});
+  }
+  return res;
+}
+S.auto=true;
+
+/* ---------- Generator traffic ---------- */
+const extIps=Array.from({length:14},()=>`${rnd(11,223)}.${rnd(0,255)}.${rnd(0,255)}.${rnd(1,254)}`);
+function normalPacket(){
+  const x=Math.random();
+  if(x<.50)return{ip:pick(extIps),port:443,proto:"tcp",type:"Koneksi HTTPS"};
+  if(x<.75)return{ip:pick(extIps),port:80,proto:"tcp",type:"Koneksi HTTP"};
+  if(x<.83)return{ip:"192.168.1."+rnd(2,40),port:22,proto:"tcp",type:"Koneksi SSH"};
+  if(x<.92)return{ip:pick(extIps),port:53,proto:"udp",type:"Query DNS"};
+  const port=pick([21,23,25,445,3306,3389,8080]);
+  return{ip:pick(extIps),port,proto:"tcp",type:"Probe port "+port};
+}
+const rndExt=()=>`${pick([45,91,103,185,193,203])}.${rnd(1,254)}.${rnd(1,254)}.${rnd(1,254)}`;
+function attack(kind){
+  const ip=rndExt(),L=[];
+  if(kind==="scan")[21,22,23,25,80,110,443,445,3306,3389,8080].forEach(p=>L.push({ip,port:p,proto:"tcp",type:"Port Scan"}));
+  if(kind==="ssh")for(let i=0;i<10;i++)L.push({ip,port:22,proto:"tcp",type:"Brute Force SSH"});
+  if(kind==="syn")for(let i=0;i<18;i++)L.push({ip,port:80,proto:"tcp",type:"SYN Flood",sig:true});
+  if(kind==="sqli")for(let i=0;i<6;i++)L.push({ip,port:i%2?443:80,proto:"tcp",type:"SQL Injection",sig:true});
+  L.forEach((p,i)=>{p.atk=true;setTimeout(()=>{handle(p,true);schedule()},i*130)});
+  toast("Simulasi dimulai dari "+ip);
+}
+
+/* ---------- Render ---------- */
+const fmt=n=>n.toLocaleString("id-ID");
+const chip=a=>a==="allow"?'<span class="chip a">DIIZINKAN</span>':'<span class="chip b">DIBLOKIR</span>';
+let pend=false;function schedule(){if(!pend){pend=true;requestAnimationFrame(()=>{pend=false;renderAll();save()})}}
+
+function renderStats(){
+  const act=S.rules.filter(r=>r.on);
+  $("sTot").textContent=fmt(S.total);$("sAl").textContent=fmt(S.allowed);$("sBl").textContent=fmt(S.blocked);
+  $("sPass").textContent=(S.allowed/S.total*100).toFixed(1)+"%";
+  $("sRl").textContent=act.length;
+  $("sRlD").textContent=act.filter(r=>r.action==="allow").length+" Allow / "+act.filter(r=>r.action==="block").length+" Block";
+  $("nRules").textContent=S.rules.length;
+  $("fwTxt").textContent=S.fw?"AKTIF (ALLOW-LIST)":"NONAKTIF";$("fwTxt").className=S.fw?"ok":"bad";
+  $("fwDot").style.background=S.fw?"var(--gr)":"var(--rd)";
+  $("fwBtn").textContent=S.fw?"⏻ Matikan Firewall":"⏻ Aktifkan Firewall";$("fwBtn").className="btn"+(S.fw?"":" off");
+  $("ipsTxt").textContent=S.ips?"ONLINE":"OFFLINE";$("ipsTxt").className=S.ips?"cy":"bad";
+  $("trf").textContent=S.running?"⏸ Jeda traffic normal":"▶ Lanjutkan traffic normal";
+  $("auto").checked=S.auto;
+}
+function renderPorts(){
+  const top=Object.entries(S.ports).sort((a,b)=>b[1]-a[1]).slice(0,6),mx=top[0]?top[0][1]:1;
+  $("ports").innerHTML=top.map(([p,n])=>`<div class="pb"><span>:${p}</span><span class="t"><i style="width:${n/mx*100}%"></i></span><span>${fmt(n)}</span></div>`).join("");
+}
+function renderAlerts(){
+  const b=S.logs.filter(l=>l.a==="block").slice(0,5);
+  $("alerts").innerHTML=b.length?b.map(l=>`<tr><td class="m">${l.t}</td><td class="m">${esc(l.ip)}</td><td class="m">${l.port}</td><td>${esc(l.type)}</td><td>${chip(l.a)}</td></tr>`).join(""):'<tr><td class="empty" colspan="5">Belum ada peringatan. Jalankan simulasi serangan untuk melihat deteksi.</td></tr>';
+}
+function renderRules(){
+  $("rules").innerHTML=S.rules.length?S.rules.map((r,i)=>`<tr><td class="m">${i+1}</td><td>${esc(r.name)}</td><td>${chip(r.action)}</td><td class="m">${esc(r.ip)}</td><td class="m">${esc(r.port)}</td><td class="m">${r.proto}</td>
+   <td><button class="sw${r.on?" on":""}" data-t="${r.id}" aria-label="Aktifkan atau nonaktifkan ${esc(r.name)}" aria-pressed="${r.on}"></button></td>
+   <td><button class="x" data-d="${r.id}">Hapus</button></td></tr>`).join(""):'<tr><td class="empty" colspan="8">Belum ada aturan. Tambahkan aturan pertama di atas; tanpa aturan semua paket diblokir.</td></tr>';
+}
+function renderBl(){
+  $("bCnt").textContent=S.bl.length+" IP dalam daftar blokir";
+  $("bl").innerHTML=S.bl.length?S.bl.map(b=>`<tr><td class="m">${esc(b.ip)}</td><td>${esc(b.reason)}</td><td class="m">${b.t}</td><td><button class="x" data-rb="${esc(b.ip)}">Hapus</button></td></tr>`).join(""):'<tr><td class="empty" colspan="4">Blacklist kosong. Tambahkan IP di atas atau jalankan serangan dengan blacklist otomatis.</td></tr>';
+}
+function renderLogs(){
+  const f=$("lf").value,L=S.logs.filter(l=>!f||l.a===f).slice(0,120);
+  $("logs").innerHTML=L.length?L.map(l=>`<tr><td class="m">${l.t}</td><td class="m">${esc(l.ip)}</td><td class="m">${l.port}</td><td>${esc(l.type)}</td><td>${chip(l.a)}</td><td style="color:var(--mut)">${esc(l.r)}</td></tr>`).join(""):'<tr><td class="empty" colspan="6">Tidak ada catatan untuk filter ini.</td></tr>';
+}
+function renderFeed(){
+  $("feed").innerHTML=feed.length?feed.map(e=>`<div><span class="t">${e.t}</span><span>${esc(e.ip)}:${e.port}</span>${chip(e.a)}<span class="d">${esc(e.type)} · ${esc(e.r)}</span></div>`).join(""):'<div><span class="t">Menunggu lalu lintas…</span></div>';
+}
+function renderAll(){renderStats();renderPorts();renderAlerts();renderRules();renderBl();renderLogs();renderFeed();drawChart()}
+
+function drawChart(){
+  const c=$("cv");if(!c.offsetWidth)return;
+  const dpr=window.devicePixelRatio||1,W=c.offsetWidth,H=c.offsetHeight;
+  c.width=W*dpr;c.height=H*dpr;const g=c.getContext("2d");g.scale(dpr,dpr);
+  const mx=Math.max(20,...series.map(s=>s.a+s.b))*1.15,pl=34,pb=18;
+  g.strokeStyle="#1a2535";g.fillStyle="#7d8ca3";g.font="10px "+getComputedStyle(document.body).getPropertyValue("--mono");g.lineWidth=1;
+  for(let i=0;i<=4;i++){const y=6+(H-pb-6)*i/4;g.beginPath();g.moveTo(pl,y);g.lineTo(W,y);g.stroke();g.fillText(Math.round(mx*(1-i/4)),2,y+3)}
+  const line=(k,col)=>{
+    g.beginPath();series.forEach((s,i)=>{const x=pl+(W-pl)*i/(series.length-1),y=6+(H-pb-6)*(1-s[k]/mx);i?g.lineTo(x,y):g.moveTo(x,y)});
+    g.strokeStyle=col;g.lineWidth=2;g.stroke();
+    g.lineTo(W,H-pb);g.lineTo(pl,H-pb);g.closePath();g.globalAlpha=.12;g.fillStyle=col;g.fill();g.globalAlpha=1;g.fillStyle="#7d8ca3";
+  };
+  line("a","#34d399");line("b","#f43f5e");
+  g.fillText("−60 dtk",pl,H-4);g.fillText("sekarang",W-44,H-4);
+}
+
+/* ---------- Tick per detik ---------- */
+let bw=1.4;
+function tick(){
+  $("clk").textContent=new Date().toISOString().slice(11,19)+" UTC";
+  if(S.running){
+    const n=rnd(25,55);
+    for(let i=0;i<n;i++){
+      const p=normalPacket(),blocked=evaluate(p).a==="block";
+      handle(p,Math.random()<(blocked?.12:.03));
+    }
+  }
+  series.push({a:tickA,b:tickB});series.shift();
+  const rec=series.slice(-10),A=rec.reduce((s,x)=>s+x.a,0),B=rec.reduce((s,x)=>s+x.b,0),ratio=B/Math.max(1,A+B);
+  const th=ratio>.3?["TINGGI","bad"]:ratio>.14?["SEDANG","warn"]:["RENDAH","ok"];
+  $("thr").textContent=th[0];$("thr").className=th[1];
+  $("sRate").textContent="↗ "+(tickA+tickB)+" paket pada detik terakhir";
+  const load=tickA+tickB,cpu=Math.min(95,12+Math.round(load/3)+rnd(0,4)),mem=40+rnd(0,4);
+  bw=Math.max(.3,+(0.6+load/40+Math.random()*.2).toFixed(1));
+  $("cpuT").textContent=cpu+"%";$("cpuB").style.width=cpu+"%";$("memT").textContent=mem+"%";$("memB").style.width=mem+"%";$("bwT").textContent=bw+" MB/s";
+  tickA=tickB=0;
+  schedule();
+}
+
+/* ---------- Interaksi ---------- */
+let tt;function toast(m){const t=$("toast");t.textContent=m;t.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("show"),2600)}
+function route(){
+  const h=(location.hash||"#dashboard").slice(1),v=["dashboard","aturan","simulasi","log","blacklist"].includes(h)?h:"dashboard";
+  document.querySelectorAll(".view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));
+  document.querySelectorAll("#nav a").forEach(a=>a.classList.toggle("on",a.dataset.v===v));
+  renderAll();
+}
+window.addEventListener("hashchange",route);window.addEventListener("resize",drawChart);
+
+$("fwBtn").onclick=()=>{S.fw=!S.fw;toast(S.fw?"Firewall diaktifkan":"Firewall dinonaktifkan: semua paket diizinkan");schedule()};
+$("ipsBtn").onclick=()=>{S.ips=!S.ips;toast("IDS/IPS "+(S.ips?"online":"offline"));schedule()};
+$("trf").onclick=()=>{S.running=!S.running;schedule()};
+$("auto").onchange=e=>{S.auto=e.target.checked;save()};
+document.querySelectorAll("[data-atk]").forEach(b=>b.onclick=()=>attack(b.dataset.atk));
+$("mGo").onclick=()=>{
+  const ip=$("mI").value.trim(),port=+$("mP").value;
+  if(!okIp(ip))return toast("Alamat IP tidak valid. Contoh: 203.0.113.9");
+  if(!(port>=1&&port<=65535))return toast("Port harus antara 1 dan 65535");
+  const r=handle({ip,port,proto:$("mT").value,type:"Uji koneksi manual"},true);
+  toast((r.a==="allow"?"Diizinkan":"Diblokir")+" – "+r.r);schedule();
+};
+$("rAdd").onclick=()=>{
+  const name=$("rN").value.trim(),ip=$("rI").value.trim().toLowerCase()||"any",port=$("rP").value.trim().toLowerCase()||"any";
+  if(!name)return toast("Isi nama aturan terlebih dahulu");
+  if(!okIpSpec(ip))return toast("IP tidak valid. Gunakan any, 10.0.0.5, atau 10.0.0.0/24");
+  if(!okPort(port))return toast("Port tidak valid. Gunakan any, 80, 80,443, atau 1-1024");
+  S.rules.push({id:nextId++,name,action:$("rA").value,ip,port,proto:$("rT").value,on:true});
+  $("rN").value="";toast("Aturan ditambahkan");schedule();
+};
+$("rules").onclick=e=>{
+  const t=e.target.closest("[data-t]"),d=e.target.closest("[data-d]");
+  if(t){const r=S.rules.find(x=>x.id==t.dataset.t);r.on=!r.on;toast("Aturan “"+r.name+"” "+(r.on?"diaktifkan":"dinonaktifkan"))}
+  if(d){S.rules=S.rules.filter(x=>x.id!=d.dataset.d);toast("Aturan dihapus")}
+  schedule();
+};
+$("bAdd").onclick=()=>{
+  const ip=$("bI").value.trim(),reason=$("bR").value.trim()||"Ditambahkan manual";
+  if(!okIp(ip))return toast("Alamat IP tidak valid. Contoh: 198.51.100.23");
+  if(S.bl.some(b=>b.ip===ip))return toast("IP sudah ada di blacklist");
+  S.bl.unshift({ip,reason,t:now()});$("bI").value="";$("bR").value="";toast(ip+" masuk blacklist");schedule();
+};
+$("bl").onclick=e=>{const b=e.target.closest("[data-rb]");if(b){S.bl=S.bl.filter(x=>x.ip!==b.dataset.rb);toast(b.dataset.rb+" dihapus dari blacklist");schedule()}};
+$("lf").onchange=renderLogs;
+$("lClr").onclick=()=>{S.logs=[];feed=[];toast("Log dihapus");schedule()};
+
+route();tick();setInterval(tick,1000);
+</script>
+</body>
+</html>
